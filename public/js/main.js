@@ -5,7 +5,7 @@ let localStream,
   isCameraOn = true,
   isMuted = false;
 let caller = [];
-const roomId = window.location.pathname.split("/")[1]; // Get the room ID from URL
+const roomId = window.location.pathname.split("/")[1];
 
 const localVideo = document.getElementById("localVideo");
 const remoteVideo = document.getElementById("remoteVideo");
@@ -45,7 +45,6 @@ const PeerConnection = (function () {
   };
 })();
 
-// Start the local video stream
 const startMyVideo = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -59,7 +58,6 @@ const startMyVideo = async () => {
   }
 };
 
-// End the call
 const endCall = () => {
   const pc = PeerConnection.getInstance();
   if (pc) {
@@ -70,13 +68,11 @@ const endCall = () => {
   }
 };
 
-// Reset UI after call ends
 const resetUI = () => {
   localVideo.srcObject = null;
   remoteVideo.srcObject = null;
 };
 
-// Share Screen Functionality
 shareScreenBtn.addEventListener("click", async () => {
   if (!isScreenSharing) {
     try {
@@ -87,16 +83,13 @@ shareScreenBtn.addEventListener("click", async () => {
       const videoTrack = screenStream.getVideoTracks()[0];
       const sender = pc.getSenders().find((s) => s.track.kind === "video");
 
-      // Replace camera video track with screen track for the peer connection
       sender.replaceTrack(videoTrack);
 
-      // Set localVideo to display the screen sharing stream
       localVideo.srcObject = screenStream;
 
       isScreenSharing = true;
       shareScreenBtn.innerHTML = '<i class="fas fa-stop"></i>';
 
-      // Handle screen share ending
       screenStream.getTracks()[0].onended = () => stopScreenSharing();
     } catch (error) {
       console.error("Error sharing screen:", error);
@@ -112,17 +105,14 @@ const stopScreenSharing = () => {
     .getSenders()
     .find((s) => s.track.kind === "video");
 
-  // Replace screen video track with camera video track for the peer connection
   sender.replaceTrack(videoTrack);
 
-  // Revert localVideo to display the camera stream
   localVideo.srcObject = localStream;
 
   isScreenSharing = false;
   shareScreenBtn.innerHTML = '<i class="fas fa-desktop"></i>';
 };
 
-// Toggle Camera Functionality
 toggleCameraBtn.addEventListener("click", () => {
   isCameraOn = !isCameraOn;
   localStream.getVideoTracks()[0].enabled = isCameraOn;
@@ -131,7 +121,6 @@ toggleCameraBtn.addEventListener("click", () => {
     : '<i class="fas fa-video-slash"></i>';
 });
 
-// Mute/Unmute Functionality
 toggleMicBtn.addEventListener("click", () => {
   isMuted = !isMuted;
   localStream.getAudioTracks()[0].enabled = !isMuted;
@@ -140,11 +129,9 @@ toggleMicBtn.addEventListener("click", () => {
     : '<i class="fas fa-microphone"></i>';
 });
 
-// Handle Call End
 endCallBtn.addEventListener("click", () => {
   socket.emit("call-ended", caller);
   endCall();
 });
 
-// Initialize video on load
 startMyVideo();
