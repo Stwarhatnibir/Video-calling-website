@@ -5,9 +5,17 @@ window.addEventListener("load", () => {
   let roomName = helpers.getQString(location.href, "room");
 
   if (!roomName) {
+    // First load, generate room
     roomName = `room_${helpers.generateRandomString()}`;
     const roomLink = `${location.origin}?room=${roomName}`;
     location.href = roomLink;
+  } else {
+    // If a room exists and page has not been reloaded yet
+    if (!sessionStorage.getItem("hasReloaded")) {
+      // Mark as reloaded and reload the page
+      sessionStorage.setItem("hasReloaded", "true");
+      location.reload();
+    }
   }
 
   // Set a random username in session storage
@@ -16,6 +24,7 @@ window.addEventListener("load", () => {
   // Setup the video call
   setupVideoCall();
 });
+
 
 function setupVideoCall() {
   if (helpers.userMediaAvailable()) {
