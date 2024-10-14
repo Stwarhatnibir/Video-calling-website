@@ -1,0 +1,44 @@
+.chat-col {
+  right: -100vw;
+  bottom: 0;
+  top: 40.5px;
+  z-index: 1000;
+  position: fixed;
+  color: #fff;
+  padding-right: 5px;
+  padding-left: 5px;
+  padding-bottom: 40px;
+  padding-top: 15px;
+  min-height: 100vh;
+}
+
+.chat-col.chat-opened {
+  right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all 0.3s ease !important;
+}
+
+#chat-messages {
+  height: 70vh;
+  margin-bottom: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.chat-box {
+  bottom: 0px;
+  right: 0;
+  position: absolute;
+  border: 0;
+  border-top: 1px groove white;
+  border-left: 1px groove white;
+  font-size: small;
+}
+
+#local {
+  width: 15vw; /* Adjust as needed */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
