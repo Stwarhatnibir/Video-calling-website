@@ -25,7 +25,6 @@ window.addEventListener("load", () => {
   setupVideoCall();
 });
 
-
 function setupVideoCall() {
   if (helpers.userMediaAvailable()) {
     helpers
