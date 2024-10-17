@@ -41,48 +41,66 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Navbar at the top */
+/* Updated Navbar with dark glass effect */
 .navbar {
   position: fixed;
-  top: 0; /* Navbar is now at the top */
-  left 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 60px; /* Fixed height for the navbar */
-  background-color: #fff;
-  padding: 10px 20px;
-  border-bottom: 2px solid #17a2b8; /* Accent color for the top navbar */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 60px;
+  background: rgba(
+    0,
+    0,
+    0,
+    0.4
+  ); /* Dark semi-transparent background for glass effect */
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  -webkit-backdrop-filter: blur(
+    10px
+  ); /* Ensure compatibility with webkit browsers */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Light border for depth */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow for elegance */
   z-index: 1002;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 20px;
   box-sizing: border-box;
 }
 
+/* Navbar text - soft white */
 .navbar .text-white {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333; /* Contrast with white background */
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #e0e0e0; /* Soft white text for contrast */
+  letter-spacing: 1px;
 }
+
+/* Hover effect on text */
+.navbar .text-white:hover {
+  color: #17a2b8; /* Accent color for hover */
+  transition: color 0.3s ease;
+}
+
 /* Button container with transparent background */
 #control-buttons {
   position: fixed;
-  bottom: 10px; /* Adjust bottom spacing */
-  left: 50%; /* Center the box horizontally */
-  transform: translateX(-50%); /* Offset to center */
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  padding: 10px 20px; /* Padding inside the box */
+  padding: 10px 20px;
   display: flex;
   justify-content: center;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 20px;
   z-index: 1002;
-  width: auto; /* Auto width to fit the content */
+  width: auto;
 }
 
 /* Style for buttons */
 #control-buttons .btn-no-effect {
-  margin: 0 10px; /* Spacing between buttons */
-  color: white; /* Button text color */
+  margin: 0 10px;
+  color: white;
   background-color: transparent;
   border: none;
   font-size: 1.2rem;
@@ -90,7 +108,7 @@
 }
 
 #control-buttons .btn-no-effect:hover {
-  color: #17a2b8; /* Change color on hover */
+  color: #17a2b8;
   transform: scale(1.1);
 }
 
@@ -105,23 +123,10 @@
   }
 
   #control-buttons .btn-no-effect {
-    font-size: 1rem; /* Adjust button size for smaller screens */
+    font-size: 1rem;
   }
 }
 
-
-/* Responsive Design */
-@media only screen and (max-width: 767px) {
-  #control-buttons {
-    padding: 8px 0;
-  }
-
-  #control-buttons .btn-no-effect {
-    font-size: 1rem; /* Adjust button size for smaller screens */
-  }
-}
-
-/* Responsive Design */
 @media only screen and (max-width: 767px) {
   .local-video {
     width: 35vw;
