@@ -2,7 +2,7 @@ let express = require("express");
 let fs = require("fs");
 let https = require("https");
 let socketIO = require("socket.io");
-let stream = require("./src/ws/stream");
+let stream = require("./ws/stream");
 let path = require("path");
 let favicon = require("serve-favicon");
 
