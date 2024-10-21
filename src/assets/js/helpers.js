@@ -3,14 +3,13 @@ export default {
     const crypto = window.crypto || window.msCrypto;
     let array = new Uint32Array(1);
 
-    return crypto.getRandomValues(array)[0].toString(36); // Convert random value to base36 for a shorter string
+    return crypto.getRandomValues(array);
   },
 
-  // Remove the close button and adjust video element size when a stream is added/removed
   closeVideo(elemId) {
     if (document.getElementById(elemId)) {
       document.getElementById(elemId).remove();
-      this.adjustVideoElemSize(); // Keep adjusting the size based on available videos
+      this.adjustVideoElemSize();
     }
   },
 
@@ -23,9 +22,8 @@ export default {
     );
   },
 
-  // Generate or extract room name from the URL, no need for manual entry
   getQString(url = "", keyToReturn = "") {
-    url = url || location.href;
+    url = url ? url : location.href;
     let queryStrings = decodeURIComponent(url)
       .split("#", 2)[0]
       .split("?", 2)[1];
@@ -38,13 +36,16 @@ export default {
 
         splittedQStrings.forEach(function (keyValuePair) {
           let keyValue = keyValuePair.split("=", 2);
+
           if (keyValue.length) {
             queryStringObj[keyValue[0]] = keyValue[1];
           }
         });
 
         return keyToReturn
-          ? queryStringObj[keyToReturn] || null
+          ? queryStringObj[keyToReturn]
+            ? queryStringObj[keyToReturn]
+            : null
           : queryStringObj;
       }
 
@@ -54,12 +55,15 @@ export default {
     return null;
   },
 
-  // Check if media devices are available for video/audio streaming
   userMediaAvailable() {
-    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    return !!(
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia
+    );
   },
 
-  // Get user's media (audio + video) with basic audio features
   getUserFullMedia() {
     if (this.userMediaAvailable()) {
       return navigator.mediaDevices.getUserMedia({
@@ -87,7 +91,6 @@ export default {
     }
   },
 
-  // Sharing screen functionality with audio
   shareScreen() {
     if (this.userMediaAvailable()) {
       return navigator.mediaDevices.getDisplayMedia({
@@ -105,11 +108,12 @@ export default {
     }
   },
 
-  // Ice servers setup for WebRTC connection
   getIceServer() {
     return {
       iceServers: [
-        { urls: ["stun:eu-turn4.xirsys.com"] },
+        {
+          urls: ["stun:eu-turn4.xirsys.com"],
+        },
         {
           username:
             "ml0jh0qMKZKd9P_9C0UIBY2G0nSQMCFBUXGlk6IXDJf8G2uiCymg9WwbEJTMwVeiAAAAAF2__hNSaW5vbGVl",
@@ -133,6 +137,7 @@ export default {
       contentAlign = "justify-content-start";
       senderName = data.sender;
       msgBg = "";
+
       this.toggleChatNotificationBadge();
     }
 
@@ -153,21 +158,30 @@ export default {
 
     colDiv.appendChild(infoDiv);
     rowDiv.appendChild(colDiv);
+
     chatMsgDiv.appendChild(rowDiv);
 
-    if (this.pageHasFocus()) {
+    /**
+     * Move focus to the newly added message but only if:
+     * 1. Page has focus
+     * 2. User has not moved scrollbar upward. This is to prevent moving the scroll position if user is reading previous messages.
+     */
+    if (this.pageHasFocus) {
       rowDiv.scrollIntoView();
     }
   },
 
   toggleChatNotificationBadge() {
-    const chatPane = document.querySelector("#chat-pane");
-    const notificationElem = document.querySelector("#new-chat-notification");
-
-    if (chatPane.classList.contains("chat-opened")) {
-      notificationElem.setAttribute("hidden", true);
+    if (
+      document.querySelector("#chat-pane").classList.contains("chat-opened")
+    ) {
+      document
+        .querySelector("#new-chat-notification")
+        .setAttribute("hidden", true);
     } else {
-      notificationElem.removeAttribute("hidden");
+      document
+        .querySelector("#new-chat-notification")
+        .removeAttribute("hidden");
     }
   },
 
@@ -178,7 +192,7 @@ export default {
           .find((s) => s.track && s.track.kind === stream.kind)
       : false;
 
-    if (sender) sender.replaceTrack(stream);
+    sender ? sender.replaceTrack(stream) : "";
   },
 
   toggleShareIcons(share) {
@@ -201,6 +215,7 @@ export default {
 
   maximiseStream(e) {
     let elem = e.target.parentElement.previousElementSibling;
+
     elem.requestFullscreen() ||
       elem.mozRequestFullScreen() ||
       elem.webkitRequestFullscreen() ||
@@ -216,6 +231,26 @@ export default {
       e.target.parentElement.previousElementSibling.muted = false;
       e.target.classList.add("fa-microphone");
       e.target.classList.remove("fa-microphone-slash");
+    }
+  },
+
+  saveRecordedStream(stream, user) {
+    let blob = new Blob(stream, { type: "video/webm" });
+
+    let file = new File([blob], `${user}-${moment().unix()}-record.webm`);
+
+    saveAs(file);
+  },
+
+  toggleModal(id, show) {
+    let el = document.getElementById(id);
+
+    if (show) {
+      el.style.display = "block";
+      el.removeAttribute("aria-hidden");
+    } else {
+      el.style.display = "none";
+      el.setAttribute("aria-hidden", true);
     }
   },
 
@@ -253,9 +288,9 @@ export default {
     }
   },
 
-  // Automatically create demo videos and adjust their layout
   createDemoRemotes(str, total = 6) {
     let i = 0;
+
     let testInterval = setInterval(() => {
       let newVid = document.createElement("video");
       newVid.id = `demo-${i}-video`;
@@ -263,18 +298,22 @@ export default {
       newVid.autoplay = true;
       newVid.className = "remote-video";
 
+      //video controls elements
       let controlDiv = document.createElement("div");
       controlDiv.className = "remote-video-controls";
       controlDiv.innerHTML = `<i class="fa fa-microphone text-white pr-3 mute-remote-mic" title="Mute"></i>
-                <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
+              <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
 
+      //create a new div for card
       let cardDiv = document.createElement("div");
       cardDiv.className = "card card-sm";
       cardDiv.id = `demo-${i}`;
       cardDiv.appendChild(newVid);
       cardDiv.appendChild(controlDiv);
 
+      //put div in main-section elem
       document.getElementById("videos").appendChild(cardDiv);
+
       this.adjustVideoElemSize();
 
       i++;
